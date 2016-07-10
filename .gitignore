@@ -1,5 +1,6 @@
 /data
 /logs
+.ipynb_checkpoints/
 __pycache__/
 
 # User-specific stuff:
