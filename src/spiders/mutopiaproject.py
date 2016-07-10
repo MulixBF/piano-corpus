@@ -18,7 +18,7 @@ def _extract_cell_text(table, row, col, postpocess=None):
 
 
 def _extract_cell_link_href(table, row, col):
-    selector = 'tr:nth-child(5) td:nth-child(1) a::attr(href)'.format(row=row, col=col)
+    selector = 'tr:nth-child({row}) td:nth-child({col}) a::attr(href)'.format(row=row, col=col)
     return table.css(selector).extract_first()
 
 
