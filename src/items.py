@@ -4,7 +4,6 @@
 #
 # See documentation in:
 # http://doc.scrapy.org/en/latest/topics/items.html
-
 import scrapy
 
 
@@ -16,6 +15,7 @@ class Composition(scrapy.Item):
     composer = scrapy.Field()
     instruments = scrapy.Field()
     tags = scrapy.Field()
+    type = scrapy.Field()
     year = scrapy.Field()
     key = scrapy.Field()
     catalogue_code = scrapy.Field()
