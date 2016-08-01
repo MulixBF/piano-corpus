@@ -1,4 +1,6 @@
 /data
+/output
+/prepared
 /logs
 .ipynb_checkpoints/
 __pycache__/
