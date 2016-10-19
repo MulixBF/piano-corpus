@@ -5,7 +5,14 @@ from music21.pitch import Pitch
 from music21.converter import parseFile
 
 from os.path import basename
+import re
 import sys
+import subprocess
+
+def get_key(filename):
+    with open(filename, 'r') as f:
+        lines = f.readlines()
+        key_line = [l for l in lines if l.startswith('K:')]
 
 def get_interval(key):
     if key.mode == 'major':

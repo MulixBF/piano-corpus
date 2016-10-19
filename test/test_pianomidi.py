@@ -13,7 +13,7 @@ class MutopiaSpiderTests(unittest.TestCase):
         for text, expected_result in test_cases:
             with self.subTest('{0} -> {1}'.format(text, expected_result)):
                 result = pianomidi._parse_title_string(text)
-                self.assertEqual(result[0], expected_result[0])
+                self.assrtEqual(result[0], expected_result[0])
                 self.assertEqual(result[1], expected_result[1])
 
 if __name__ == '__main__':
