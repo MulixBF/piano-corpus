@@ -11,7 +11,7 @@ logger = logging.getLogger(__name__)
 class FilesPipelineWithRedirect(FilesPipeline):
     """
     Kludge. See https://github.com/scrapy/scrapy/issues/2004
-    There is a pull request pending from August: https://github.com/scrapy/scrapy/pull/2193
+    There is a pull request pending since August: https://github.com/scrapy/scrapy/pull/2193
     """
 
     def media_downloaded(self, response, request, info):
