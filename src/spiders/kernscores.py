@@ -49,7 +49,7 @@ class KernscoresSpider(scrapy.Spider):
         item['catalogue_code'] = self._get_row_data(response, 'Scholarly cat. num.')
         item['genre'] = self._get_row_data(response, 'Style, period, or type of work designation')
         item['year'] = self._get_row_data(response, 'Date of composition')
-        item['details_url'] = response.url#
+        item['details_url'] = response.url
         item['file_urls'] = [self._get_midi_url(response)]
 
         yield item
