@@ -7,4 +7,6 @@ SPIDER_MODULES = ['src.spiders']
 NEWSPIDER_MODULE = 'src.spiders'
 ROBOTSTXT_OBEY = False
 FILES_STORE = 'data'
-ITEM_PIPELINES = {'scrapy.pipelines.files.FilesPipeline': 1}
+ITEM_PIPELINES = {
+    'src.pipelines.files.FilesPipelineWithRedirect': 1
+}

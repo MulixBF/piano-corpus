@@ -18,5 +18,6 @@ class Composition(scrapy.Item):
     type = scrapy.Field()
     year = scrapy.Field()
     key = scrapy.Field()
+    duration = scrapy.Field()
     catalogue_code = scrapy.Field()
     details_url = scrapy.Field()
