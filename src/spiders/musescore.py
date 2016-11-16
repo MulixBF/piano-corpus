@@ -3,12 +3,32 @@ import logging
 import time
 from urllib.parse import urljoin
 from src import utils
-from src.items import Composition
+from src.items import MusescoreComposition
 
 logging.basicConfig(level=logging.INFO, filename=time.strftime('logs/%Y%m%d-%H%M%S-musescore.log'))
 
 
 class MusescoreSpider(sp.Spider):
+
+    def __init__(self, input_file='scores.txt'):
+
+        super().__init__()
+
+        self.sets = []
+        self.scores = []
+
+        with open(input_file, 'r') as f:
+            for line in f.readlines():
+
+                kind, url = line.split(':')
+
+                if kind == 'set':
+                    self.sets.append(url.strip())
+                elif kind == 'score':
+                    self.scores.append(url.strip())
+                else:
+                    raise ValueError('Line should have format (set|score): <url>')
+
     name = 'musescore'
     base_url = 'https://musescore.com/'
     allowed_domains = ['musescore.com']
@@ -21,19 +41,12 @@ class MusescoreSpider(sp.Spider):
         'DOWNLOAD_DELAY': 1
     }
 
-    sets = [
-        'opengoldberg/sets/openwtc',
-        'opengoldberg/sets/open-goldberg-variations-public-review'
-    ]
-
-    individual_scores = [
-        'user/982166/scores/979316',
-        'user/10140086/scores/2448256',
-        'user/36186/scores/57760'
-    ]
-
     def start_requests(self):
         login_url = urljoin(self.base_url, 'user/login')
+        logging.debug('Starting spider...')
+        logging.debug('Sets to crawl:\n%s', '\n'.join(self.sets))
+        logging.debug('Scores to crawl:\n%s', '\n'.join(self.scores))
+
         yield sp.Request(login_url, self.login)
 
     def login(self, response):
@@ -53,7 +66,7 @@ class MusescoreSpider(sp.Spider):
         for set_url in self.sets:
             yield sp.Request(urljoin(self.base_url, set_url), self.scrape_set)
 
-        for score_url in self.individual_scores:
+        for score_url in self.scores:
             yield sp.Request(urljoin(self.base_url, score_url), self.scrape_score)
 
     def scrape_set(self, response):
@@ -80,13 +93,21 @@ class MusescoreSpider(sp.Spider):
     def scrape_score(self, response):
         score_info = self._parse_info_grid(response)
 
-        item = Composition()
+        item = MusescoreComposition()
         item['name'] = response.css('h1.title::text')[0].extract()
         item['instruments'] = score_info['Parts']
         item['tags'] = response.css('div.score-tags a::text').extract()
         item['key'] = score_info['Key signature']
         item['duration'] = score_info['Duration']
         item['file_urls'] = [url for url in self.get_download_url(response) if url.endswith('mid')]
+
+        item['username'] = response.css('span.username a::text')[0].extract()
+        item['paid_user'] = bool(response.css('span.username a.pro-badge'))
+        item['license'] = score_info['License']
+
+        score_stats = response.css('ul.score-stats li var::text')
+        item['view_count'] = score_stats[0].extract() if score_stats else 0
+        item['star_count'] = score_stats[1].extract() if score_stats else 0
 
         logging.info('Scraped item %s...', item['name'])
         yield item

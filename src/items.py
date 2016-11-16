@@ -21,3 +21,11 @@ class Composition(scrapy.Item):
     duration = scrapy.Field()
     catalogue_code = scrapy.Field()
     details_url = scrapy.Field()
+
+
+class MusescoreComposition(Composition):
+    view_count = scrapy.Field()
+    star_count = scrapy.Field()
+    license = scrapy.Field()
+    username = scrapy.Field()
+    paid_user = scrapy.Field()
