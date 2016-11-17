@@ -34,11 +34,11 @@ class MusescoreSpider(sp.Spider):
     allowed_domains = ['musescore.com']
 
     login_path = 'user/login'
-    username = 'sidedeb'
-    password = 'sidedeb'
+    username = 'tulebo'
+    password = 'tulebo'
 
     custom_settings = {
-        'DOWNLOAD_DELAY': 1
+        'DOWNLOAD_DELAY': 2
     }
 
     def start_requests(self):
@@ -94,20 +94,21 @@ class MusescoreSpider(sp.Spider):
         score_info = self._parse_info_grid(response)
 
         item = MusescoreComposition()
-        item['name'] = response.css('h1.title::text')[0].extract()
-        item['instruments'] = score_info['Parts']
+        item['name'] = response.css('h1.title::text').extract()
+        item['instruments'] = score_info.get('Parts')
         item['tags'] = response.css('div.score-tags a::text').extract()
-        item['key'] = score_info['Key signature']
-        item['duration'] = score_info['Duration']
+        item['key'] = score_info.get('Key signature')
+        item['duration'] = score_info.get('Duration')
         item['file_urls'] = [url for url in self.get_download_url(response) if url.endswith('mid')]
 
-        item['username'] = response.css('span.username a::text')[0].extract()
+        item['username'] = response.css('span.username a::text').extract()
         item['paid_user'] = bool(response.css('span.username a.pro-badge'))
-        item['license'] = score_info['License']
+        item['license'] = response.css('table.info-grid span.licence-text::text').extract()
 
         score_stats = response.css('ul.score-stats li var::text')
-        item['view_count'] = score_stats[0].extract() if score_stats else 0
-        item['star_count'] = score_stats[1].extract() if score_stats else 0
+        item['view_count'] = score_stats[0].extract() if len(score_stats) > 0 else 0
+        item['star_count'] = score_stats[1].extract() if len(score_stats) > 1 else 0
+        item['description'] = response.css('div.content div.score-description').extract()
 
         logging.info('Scraped item %s...', item['name'])
         yield item

@@ -28,4 +28,5 @@ class MusescoreComposition(Composition):
     star_count = scrapy.Field()
     license = scrapy.Field()
     username = scrapy.Field()
+    description = scrapy.Field()
     paid_user = scrapy.Field()
